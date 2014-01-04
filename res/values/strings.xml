@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">自习助手</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="building1">一教</string>
+    <string name="building2">二教</string>
+    <string name="emptyClass">空课室列表</string>
+</resources>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    <Button 
+        android:id="@+id/building1Bn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/building1"
+        android:textColor="#ffff"
+        android:visibility="gone"/>
+    <Button 
+        android:id="@+id/building2Bn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/building2"
+        android:textColor="#ffff"
+        android:visibility="gone"/>
+    <ProgressBar 
+        android:id="@+id/bar"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:visibility="visible"
+        style="@android:style/Widget.ProgressBar.Large"/>
+</LinearLayout>

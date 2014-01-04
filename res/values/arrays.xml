@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="timeChoices">
+        <item>所有</item>
+        <item>全天</item> 
+        <item>上午</item>
+        <item>下午</item>
+        <item>白天</item>
+        <item>晚上</item>
+     </array>
+</resources>
