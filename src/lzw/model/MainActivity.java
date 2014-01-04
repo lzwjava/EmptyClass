@@ -9,6 +9,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -19,64 +20,58 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
 public class MainActivity extends Activity {
 	String[] classTime = new String[]{"上午1.2节", "上午3.4节", "下午5.6节", "下午7.8节",
 			"晚上9.10节"};
-	Button building1Bn, building2Bn;
+	Button goBn;
 	Boolean isClick;
 	Handler handler;
 	ProgressBar bar;
-	final String classUrl = "http://jwc.bjfu.edu.cn/jscx/143126.html";
-	final String classLocaleUrl = "http://192.168.42.63:8080/empty_class/class2.html";
+	public final static String classUrl = "http://jwc.bjfu.edu.cn/jscx/143126.html";
+	//final String classLocaleUrl = "http://192.168.42.78:8080/empty_class/class2.html";
+	final String classLocaleUrl = "http://211.71.149.194:8080/empty_class/class2.html";
 	final String classFilePath = "ClassInfo.txt";
 	ArrayList<String> classList1, classList2;
 	SharedPreferences preferences;
 	SharedPreferences.Editor editor;
 	Boolean noClassInfo=false;
+	ActionBar actionBar;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+	  requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.main);
+
+		goBn = (Button) findViewById(R.id.goBn);
 		
-		building2Bn = (Button) findViewById(R.id.building2Bn);
-		building1Bn = (Button) findViewById(R.id.building1Bn);
 		bar = (ProgressBar) findViewById(R.id.bar);
 		preferences = getSharedPreferences("lzw.model", MODE_PRIVATE);
 		editor = preferences.edit();
 		//Log.i("lzw", "hello");
 		setDefaultClassInfo();
 		if(!NetworkUtil.isConnect(MainActivity.this))
-			NetworkUtil.promptConnect(MainActivity.this);
+			 NetworkUtil.promptConnect(MainActivity.this);
 		final OnClickListener listener = new OnClickListener() {
 			public void onClick(View v) {
-				ArrayList<String> objClassList = null;
-				int whichClass=0;
-				if (v.getId() == R.id.building1Bn) {
-					objClassList = classList2;
-					whichClass=1;
-				} else if (v.getId() == R.id.building2Bn) {
-					objClassList = classList1;
-					whichClass=2;
-				}
-				Bundle bundle = new Bundle();
-				bundle.putInt("WhichClass",whichClass);
-				bundle.putStringArrayList("class", objClassList);
-				bundle.putBoolean("noClassInfo", noClassInfo);
-				intentToClass(MainActivity.this, ClassInfoActivity.class, bundle);
+				goBn.setVisibility(View.GONE);
+			  bar.setVisibility(View.VISIBLE);
+				newThreadGetUrl();
 			}
 		};
-		newThreadGetUrl();
+		goBn.setOnClickListener(listener);
 		
 		handler = new Handler() {
 			public void handleMessage(Message msg) {
 				if (msg.what == 0x123) {
-					building1Bn.setOnClickListener(listener);
-					building2Bn.setOnClickListener(listener);
-					building1Bn.setVisibility(View.VISIBLE);
-					building2Bn.setVisibility(View.VISIBLE);
-					bar.setVisibility(View.GONE);
+					Bundle bundle = new Bundle();
+					bundle.putStringArrayList("class1", classList2);
+					bundle.putStringArrayList("class2", classList1);
+					bundle.putBoolean("noClassInfo", noClassInfo);
+					intentToClass(MainActivity.this, ClassInfoActivity.class, bundle);
+					finish();
 				}
 			}
 		};
@@ -143,11 +138,13 @@ public class MainActivity extends Activity {
 			if (isConnect) {
 				classMsg = DownUtil.getStringFromUrl(classUrl);
 				//classMsg = DownUtil.getStringFromUrl(classLocaleUrl);
+				Log.i("AndroidRuntime",classMsg);
 				if (isHaveClassInfo(classMsg)) {
 					isHaveNewClass = true;
 					Log.v("lzw","else");
 				}else {
-					String date = getDateStr(classMsg);
+					String date;
+					date= getDateStr(classMsg);
 				  putDateIntoPreferences(date);
 					noClassInfo=true;
 				}

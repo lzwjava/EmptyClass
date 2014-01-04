@@ -21,7 +21,8 @@
         android:label="@string/app_name" >
         <activity
             android:name="lzw.model.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Dialog" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,6 +32,10 @@
         <activity 
             android:name="lzw.model.ClassInfoActivity"
             android:label="@string/emptyClass">            
+        </activity>
+        <activity 
+            android:name="lzw.model.WebsiteActivity"
+            android:label="@string/app_name">            
         </activity>
     </application>
 

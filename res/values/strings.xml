@@ -7,4 +7,6 @@
     <string name="building1">一教</string>
     <string name="building2">二教</string>
     <string name="emptyClass">空课室列表</string>
+    <string name="goStudy">我要去自习！</string>
+    <string name="goWebsite">教务网</string>
 </resources>

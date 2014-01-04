@@ -8,4 +8,9 @@
         <item>白天</item>
         <item>晚上</item>
      </array>
+    <array name="classChoices">
+        <item>一教</item>
+        <item>二教</item>
+        <item>官网</item>
+    </array>
 </resources>
