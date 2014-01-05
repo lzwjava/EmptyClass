@@ -8,5 +8,15 @@
     <string name="building2">二教</string>
     <string name="emptyClass">空课室列表</string>
     <string name="goStudy">我要去自习！</string>
-    <string name="goWebsite">教务网</string>
+    <string name="goWebsite">官网</string>
+    <string name="morning1">上午一</string>
+    <string name="morning2">上午二</string>
+    <string name="afternoon1">下午一</string>
+    <string name="afternoon2">下午二</string>
+    <string name="evening">晚上</string>
+    <string name="building">课室</string>
+    <string name="time">时间</string>
+    <string name="chooseAll">全选</string>
+    <string name="cancelAll">清空</string>
+    <string name="inflating">鞭打网络中......</string>
 </resources>

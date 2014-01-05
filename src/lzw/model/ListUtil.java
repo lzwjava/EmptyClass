@@ -13,16 +13,24 @@ public class ListUtil{
 		return subList;
 	}
 	
-	static ArrayList<String> splitList(List<String> list) {
-		ArrayList<String> result = new ArrayList<String>();
+	static ArrayList<ArrayList<String>> getSubArrayList(ArrayList<ArrayList<String>> list, 
+	 int st, int end) {
+		ArrayList<ArrayList<String>> subList = new ArrayList<ArrayList<String>>();
+		for (int i = st; i < end; i++)
+			subList.add(list.get(i));
+		return subList;
+	}
+	
+	static ArrayList<ArrayList<String>> splitList(List<String> list) {
+		ArrayList<ArrayList<String>> result = new ArrayList<ArrayList<String>>();
 		String last = "888";
-		List<String> curList = null;
+		ArrayList<String> curList = null;
 		int cnt = 0;
 		for (int i = 0; i < list.size(); i++) {
 			String cur = list.get(i);
 			if (cur.compareTo(last) < 0) {
 				if (last != "888") {
-					result.add(curList.toString());
+					result.add(curList);
 				}
 				curList = new ArrayList<String>();
 				cnt++;
@@ -32,7 +40,7 @@ public class ListUtil{
 			curList.add(cur);
 			last = cur;
 		}
-		result.add(curList.toString());
+		result.add(curList);
 		return result;
 	}
 	
@@ -51,7 +59,7 @@ public class ListUtil{
 		  new HashMap<String,String>();
 		for(int i=0;i<list.size();i++){
 			//String tmp=map.get("")
-			for(String s : list.get(i).replaceAll("[^0-9]"
+			for(String s : list.get(i).replaceAll("[^0-9]+"
 					,",").split(",")){
 				if(s.length()<3) continue;
 				String value=map.get(s);

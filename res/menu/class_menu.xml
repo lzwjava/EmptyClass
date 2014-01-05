@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:showAsAction="always|withText"
+        android:title="@string/building"
+        android:layout_width="wrap_content"
+        android:icon="@android:drawable/ic_menu_more">
+        <menu>
+            <group >
+                <item
+                    android:id="@+id/building1"
+                    android:title="@string/building1"/>
+                <item
+                    android:id="@+id/building2"
+                    android:title="@string/building2"/>
+                <item
+                    android:id="@+id/goWebsite"
+                    android:title="@string/goWebsite"/>
+            </group>
+        </menu>
+    </item>
+    <item
+        android:showAsAction="always|withText"
+        android:title="@string/time"
+        android:icon="@android:drawable/checkbox_on_background">
+        <menu>
+            <group android:checkableBehavior="all" >
+                <item
+                    android:id="@+id/morning1"
+                    android:title="@string/morning1">
+                </item>
+                <item
+                    android:id="@+id/morning2"
+                    android:title="@string/morning2">
+                </item>
+                <item
+                    android:id="@+id/afternoon1"
+                    android:title="@string/afternoon1">
+                </item>
+                <item
+                    android:id="@+id/afternoon2"
+                    android:title="@string/afternoon2">
+                </item>
+                <item
+                    android:id="@+id/evening"
+                    android:title="@string/evening">
+                </item>
+                <item
+                    android:id="@+id/chooseAll"
+                    android:title="@string/chooseAll">
+                </item>
+                <item
+                    android:id="@+id/cancelAll"
+                    android:title="@string/cancelAll">
+                </item>
+            </group>
+        </menu>
+    </item>
+
+</menu>

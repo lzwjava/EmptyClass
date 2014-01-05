@@ -17,7 +17,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -31,34 +30,37 @@ public class MainActivity extends Activity {
 	Boolean isClick;
 	Handler handler;
 	ProgressBar bar;
-	public final static String classUrl = "http://jwc.bjfu.edu.cn/jscx/143126.html";
-	//final String classLocaleUrl = "http://192.168.42.78:8080/empty_class/class2.html";
-	final String classLocaleUrl = "http://211.71.149.194:8080/empty_class/class2.html";
+	//String classUrl="http://211.71.149.118:8080/empty_class/class2.html";
+	String classUrl= "http://jwc.bjfu.edu.cn/jscx/143126.html";
+	//classUrl = "http://192.168.43.11:8080/empty_class/class2.html";
 	final String classFilePath = "ClassInfo.txt";
-	ArrayList<String> classList1, classList2;
+	public static final String noClassInfoStr="noClassInfo";
 	SharedPreferences preferences;
 	SharedPreferences.Editor editor;
-	Boolean noClassInfo=false;
 	ActionBar actionBar;
+	View tv=null;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 	  requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.main);
-
 		goBn = (Button) findViewById(R.id.goBn);
-		
 		bar = (ProgressBar) findViewById(R.id.bar);
+		tv=(View)findViewById(R.id.tryInflate);
 		preferences = getSharedPreferences("lzw.model", MODE_PRIVATE);
 		editor = preferences.edit();
-		//Log.i("lzw", "hello");
+		editor.putBoolean("noClassInfo", false);
+		editor.commit();
 		setDefaultClassInfo();
-		if(!NetworkUtil.isConnect(MainActivity.this))
-			 NetworkUtil.promptConnect(MainActivity.this);
+		if(isNeedUpdate()&&!NetworkUtil.isConnect(MainActivity.this)){
+			NetworkUtil.promptConnect(MainActivity.this);
+		}
 		final OnClickListener listener = new OnClickListener() {
 			public void onClick(View v) {
 				goBn.setVisibility(View.GONE);
 			  bar.setVisibility(View.VISIBLE);
-				newThreadGetUrl();
+			  tv.setVisibility(View.VISIBLE);
+				if(isNeedUpdate()) newThreadGetUrl();
+				else handler.sendEmptyMessage(0x123);
 			}
 		};
 		goBn.setOnClickListener(listener);
@@ -66,11 +68,7 @@ public class MainActivity extends Activity {
 		handler = new Handler() {
 			public void handleMessage(Message msg) {
 				if (msg.what == 0x123) {
-					Bundle bundle = new Bundle();
-					bundle.putStringArrayList("class1", classList2);
-					bundle.putStringArrayList("class2", classList1);
-					bundle.putBoolean("noClassInfo", noClassInfo);
-					intentToClass(MainActivity.this, ClassInfoActivity.class, bundle);
+					intentToClass(MainActivity.this, ClassInfoActivity.class);
 					finish();
 				}
 			}
@@ -85,8 +83,7 @@ public class MainActivity extends Activity {
 			isFirstTime=false;
 			classMsg = FileUtil.getStrFromFile(MainActivity.this, R.raw.class1);
 			classes = ParseUtil.getNumFromStr(classMsg);
-			putDateIntoPreferences("2013-10-31");
-			FileUtil.write(MainActivity.this, classFilePath, classes.toString(),MODE_PRIVATE);
+			writeToDatabase(classes,"2013-10-31");
 			editor.putBoolean("isFirstTime",false);
 			editor.commit();
 		}
@@ -97,9 +94,8 @@ public class MainActivity extends Activity {
 		editor.commit();
 	}
 	
-	void intentToClass(Context ctx, Class<?> cls, Bundle bundle) {
+	void intentToClass(Context ctx, Class<?> cls) {
 		Intent intent = new Intent();
-		intent.putExtras(bundle);
 		intent.setClass(ctx, cls);
 		startActivity(intent);
 	}
@@ -107,14 +103,33 @@ public class MainActivity extends Activity {
 	void newThreadGetUrl() {
 		new Thread() {
 			public void run() {
-				// String classMsg = DownUtil.getStringFromUrl(classUrl);
-				List<String> classes = getClasses();
-				ArrayList<String> classList = ListUtil.splitList(classes);
-				classList1 = ListUtil.getSubList(classList, 0, 5);
-				classList2 = ListUtil.getSubList(classList, 5, 10);
+				getClasses();
 				handler.sendEmptyMessage(0x123);
 			}
 		}.start();
+	}
+	
+	void writeToDatabase(List<String> classes,String date) {
+		putDateIntoPreferences(date);
+		
+		ArrayList<ArrayList<String>> classList = ListUtil.splitList(classes),
+				classList1,classList2;
+		classList1 = ListUtil.getSubArrayList(classList, 0, 5);
+		classList2 = ListUtil.getSubArrayList(classList, 5, 10);
+		initDatabase(MainActivity.this,"class1.db3",classList2);
+		initDatabase(MainActivity.this,"class2.db3",classList1);
+	}
+	
+	public void initDatabase(Context cxt,String file,ArrayList<ArrayList<String>> classList){
+		MyDataBaseHelper dbHelper = new MyDataBaseHelper(cxt,file, 1);
+		dbHelper.clearTable();
+		for(int i=0;i<5;i++){
+			ArrayList<String> classes = classList.get(i);
+			for(String classStr : classes){
+				dbHelper.updateData(classStr, i, 1);
+			}
+		}
+		dbHelper.close();
 	}
 	
 	boolean isHaveClassInfo(String classMsg){
@@ -122,43 +137,32 @@ public class MainActivity extends Activity {
 		return classes!=null &&classes.size()>0;
 	}
 	
-	List<String> getClasses() {
-		String classMsg;
-		List<String> classes;
-		// boolean isDownloadFile = preferences.getBoolean("isDownloadFile", false);
-		classMsg = FileUtil.read(MainActivity.this, classFilePath);
-		classes = ParseUtil.getNumFromStr(classMsg);
-		String latestDate = preferences.getString("latestDate","");
+	boolean isNeedUpdate(){
+		String latestDate = preferences.getString("latestDate", "");
 		String todayDate = TimeUtil.getTodayDate();
 		long day = TimeUtil.dateSubtract(todayDate, latestDate);
-		//Log.v("lzw",latestDate);
-		if (day > 0) {
-			boolean isConnect = NetworkUtil.isConnect(MainActivity.this);
-			boolean isHaveNewClass = false;
-			if (isConnect) {
-				classMsg = DownUtil.getStringFromUrl(classUrl);
-				//classMsg = DownUtil.getStringFromUrl(classLocaleUrl);
-				Log.i("AndroidRuntime",classMsg);
-				if (isHaveClassInfo(classMsg)) {
-					isHaveNewClass = true;
-					Log.v("lzw","else");
-				}else {
-					String date;
-					date= getDateStr(classMsg);
-				  putDateIntoPreferences(date);
-					noClassInfo=true;
-				}
-			}
-			if (isHaveNewClass) {
-				classes = ParseUtil.getClassFromHtml(classMsg);
-				FileUtil.write(MainActivity.this, classFilePath, classes.toString(),
-						MODE_PRIVATE);
+		return day>0;
+	}
+
+	void getClasses() {
+		boolean isConnect = NetworkUtil.isConnect(MainActivity.this);
+		boolean isHaveNewClass = false;
+		if (isConnect) {
+			String classMsg = "";
+			classMsg = DownUtil.getStringFromUrl(classUrl);
+			// classMsg = DownUtil.getStringFromUrl(classLocaleUrl);
+			if (isHaveClassInfo(classMsg)) {
+				List<String> classes = ParseUtil.getClassFromHtml(classMsg);
 				String date = getDateStr(classMsg);
+				writeToDatabase(classes, date);
+			} else {
+				String date;
+				date = getDateStr(classMsg);
 				putDateIntoPreferences(date);
-				return classes;
+				editor.putBoolean(noClassInfoStr, true);
+				editor.commit();
 			}
 		}
-		return classes;
 	}
 
 	String getDateStr(String originStr) {
@@ -173,4 +177,5 @@ public class MainActivity extends Activity {
 		String date=y + "-" + m + "-" + d;
 		return TimeUtil.addDateStr(date, 1);
 	}
+	
 }
