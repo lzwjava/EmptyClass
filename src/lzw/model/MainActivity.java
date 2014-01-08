@@ -32,7 +32,7 @@ public class MainActivity extends Activity {
 	ProgressBar bar;
 	//String classUrl="http://211.71.149.118:8080/empty_class/class2.html";
 	String classUrl= "http://jwc.bjfu.edu.cn/jscx/143126.html";
-	//classUrl = "http://192.168.43.11:8080/empty_class/class2.html";
+	//String classUrl = "http://192.168.42.27/empty_class/class2.html";
 	final String classFilePath = "ClassInfo.txt";
 	public static final String noClassInfoStr="noClassInfo";
 	SharedPreferences preferences;

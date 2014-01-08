@@ -6,17 +6,20 @@
         android:title="@string/building"
         android:layout_width="wrap_content"
         android:icon="@android:drawable/ic_menu_more">
-        <menu>
+        <menu >
             <group >
                 <item
                     android:id="@+id/building1"
+                    android:layout_width="wrap_content"
                     android:title="@string/building1"/>
                 <item
                     android:id="@+id/building2"
-                    android:title="@string/building2"/>
+                    android:title="@string/building2"
+                    android:layout_width="wrap_content"/>
                 <item
                     android:id="@+id/goWebsite"
-                    android:title="@string/goWebsite"/>
+                    android:title="@string/goWebsite"
+                    android:layout_width="wrap_content"/>
             </group>
         </menu>
     </item>

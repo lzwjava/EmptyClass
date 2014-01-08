@@ -1,7 +1,6 @@
 package lzw.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,20 +8,25 @@ import java.util.Map;
 import lzw.EmptyClasses.R;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.InflateException;
+import android.view.LayoutInflater;
+import android.view.LayoutInflater.Factory;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -61,9 +65,7 @@ public class ClassInfoActivity extends Activity {
 		editor=preferences.edit();
 		String date=preferences.getString("latestDate",null);
 		noClassInfo=preferences.getBoolean(MainActivity.noClassInfoStr,true);
-		//initData();
 		initTitle(date);
-		//initSpinner();
 		
 		classView = (ListView) findViewById(R.id.classView);
 		adapter = new ArrayAdapter<String>(ClassInfoActivity.this,
@@ -71,12 +73,10 @@ public class ClassInfoActivity extends Activity {
 		
 		curTimeIndex=TimeUtil.getCurTimeIndex();
 		setActionBarTitle(curClass);
-		//spinner.setSelection(curTimeIndex);
-		//class_spinner.setSelection(curClass);
+		
 		adapter.notifyDataSetChanged();
 		dbHelper1=new MyDataBaseHelper(this, "class1.db3", 1);
 		dbHelper2=new MyDataBaseHelper(this, "class2.db3", 1);
-		//testDataBase(dbHelper1);
 		
 		handler=new Handler(){
 			public void handleMessage(Message msg){
@@ -202,31 +202,6 @@ public class ClassInfoActivity extends Activity {
 		return true;
   }
 	
-	protected void initData() {
-		Intent intent=getIntent();
-		Bundle bundle=intent.getExtras();
-		List<String> classList1
-		  =bundle.getStringArrayList("class1");
-		List<String> classList2=bundle.getStringArrayList("class2");
-		
-		map1=ListUtil.getMapFromList(classList1);
-		map2=ListUtil.getMapFromList(classList2);
-		classSet1=ListUtil.getAllKeyFromMap(map1);
-		classSet2=ListUtil.getAllKeyFromMap(map2);
-		Arrays.sort(classSet1,new ClassComparator(map1));
-		Arrays.sort(classSet2,new ClassComparator(map2));
-		getSubSet(classSet1,map1,classSubSet1);
-		getSubSet(classSet2,map2,classSubSet2);
-	}
-
-	protected void initSpinner() {
-		spinner=(Spinner)findViewById(R.id.spinner);
-		SpinnerSelectedListner listner = new SpinnerSelectedListner();
-		spinner.setOnItemSelectedListener(listner);
-		class_spinner=(Spinner)findViewById(R.id.class_spinner);
-		class_spinner.setOnItemSelectedListener(listner);
-	}
-	
 	protected void initTitle(String date) {
 		origTitle+=date.substring(5)+" ";
 		origTitle+="空课室 ";
@@ -238,7 +213,9 @@ public class ClassInfoActivity extends Activity {
 			tmp="一教";
 		}else tmp="二教";
 		actionBar=getActionBar();
-		actionBar.setTitle(origTitle+" "+tmp);
+	  actionBar.setTitle(origTitle+" "+tmp);
+	  Drawable drawable=this.getResources().getDrawable(R.drawable.bar);
+	  actionBar.setBackgroundDrawable(drawable);
 	}
 	
 	public void goWebsite(View v){
@@ -259,49 +236,6 @@ public class ClassInfoActivity extends Activity {
 		adapter.clear();
 		adapter.add("所有课室");
 		classView.setAdapter(adapter);
-	}
-	
-	void getSubSet(String[] classSet,HashMap<String,String>map,
-	 String classSubSet[][]){
-		classSubSet[0]=classSet;
-		classSubSet[1]=ListUtil.getSubSetHave(map,classSet,"01234");
-		classSubSet[2]=ListUtil.getSubSetHave(map,classSet,"01");
-		classSubSet[3]=ListUtil.getSubSetHave(map,classSet,"23");
-		classSubSet[4]=ListUtil.getSubSetHave(map,classSet,"0123");
-		classSubSet[5]=ListUtil.getSubSetHave(map,classSet,"4");
-		ClassComparator classComparator=new
-		  ClassComparator(map);
-		for(int i=2;i<6;i++) Arrays.sort(classSubSet[i]);
-	}
-	
-	class SpinnerSelectedListner implements OnItemSelectedListener{
-		public void onItemSelected(AdapterView<?> parent,
-				View view,int position,long id){
-			int pid=parent.getId();
-			if(pid==class_spinner.getId()&&
-				 position==2){
-				goWebsite(null);
-			}
-				
-			if(pid==spinner.getId()){
-				curTimeIndex=position;
-			}else if(pid==class_spinner.getId()){
-				curClass=position;
-			}
-			HashMap<String,String> map=null;
-			String[][] classSubSet;
-			if(curClass==0){
-				classSubSet=classSubSet1;
-				map=map1;
-			}else{
-				classSubSet=classSubSet2;
-				map=map2;
-			}
-			if(noClassInfo) updateListViewWhenHoliday();
-			else updateListView(classSubSet[curTimeIndex],map);
-		}
-		public void onNothingSelected(AdapterView<?> parent){ 
-		}
 	}
 	
 	protected void onResume(){
