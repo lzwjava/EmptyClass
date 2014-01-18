@@ -68,7 +68,7 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int website=0x7f030005;
     }
     public static final class menu {
-        public static final int class_menu=0x7f090000;
+        public static final int glass_room_menu=0x7f090000;
         public static final int main=0x7f090001;
     }
     public static final class raw {
@@ -91,8 +91,10 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int goWebsite=0x7f070007;
         public static final int hello_world=0x7f070002;
         public static final int inflating=0x7f070011;
+        public static final int logOut=0x7f070012;
         public static final int morning1=0x7f070008;
         public static final int morning2=0x7f070009;
+        public static final int options=0x7f070013;
         public static final int time=0x7f07000e;
     }
     public static final class style {

@@ -8,21 +8,15 @@ import java.util.Map;
 import lzw.EmptyClasses.R;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.AttributeSet;
 import android.util.Log;
-import android.view.InflateException;
-import android.view.LayoutInflater;
-import android.view.LayoutInflater.Factory;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -133,7 +127,7 @@ public class ClassInfoActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu){
 		MenuInflater inflator=new MenuInflater(this);
 		classMenu=menu;
-		inflator.inflate(R.menu.class_menu,menu);
+		inflator.inflate(R.menu.glass_room_menu,menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 	
@@ -214,7 +208,11 @@ public class ClassInfoActivity extends Activity {
 		}else tmp="¶þ½Ì";
 		actionBar=getActionBar();
 	  actionBar.setTitle(origTitle+" "+tmp);
-	  Drawable drawable=this.getResources().getDrawable(R.drawable.bar);
+	  setTitleDrawable(R.drawable.bar);
+	}
+
+	void setTitleDrawable(int id) {
+		Drawable drawable=this.getResources().getDrawable(id);
 	  actionBar.setBackgroundDrawable(drawable);
 	}
 	

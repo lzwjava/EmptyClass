@@ -19,4 +19,6 @@
     <string name="chooseAll">全选</string>
     <string name="cancelAll">清空</string>
     <string name="inflating">鞭打网络中......</string>
+    <string name="logOut">注销</string>
+     <string name="options">选项</string>
 </resources>
